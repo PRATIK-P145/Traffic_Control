@@ -18,7 +18,7 @@ const STRIPE_COUNT = Math.floor((ROAD_WIDTH + STRIPE_GAP) / (STRIPE_WIDTH + STRI
 const ROAD_HALF = ROAD_WIDTH / 2;
 const TOTAL_ROAD_HALF = ROAD_HALF + SIDEWALK_WIDTH;
 
-const IntersectionRoad = () => {
+const IntersectionRoad = ({ vehicles = [] }) => {
   return (
     <svg
       viewBox={`0 0 ${CANVAS_SIZE} ${CANVAS_SIZE}`}
@@ -107,39 +107,7 @@ const IntersectionRoad = () => {
       <rect x={CENTER - ROAD_HALF} y={CENTER - ROAD_HALF - 4} width={ROAD_WIDTH} height={4} fill="white" />
       <rect x={CENTER - ROAD_HALF} y={CENTER + ROAD_HALF} width={ROAD_WIDTH} height={4} fill="white" />
 
-      {/* 4.3 CROSSWALKS (Zebra Stripes) */}
-      <g opacity="0.9">
-        {/* Left Crosswalk */}
-        <rect 
-            x={CENTER - ROAD_HALF - 24} 
-            y={CENTER - ROAD_HALF} 
-            width={16} 
-            height={ROAD_WIDTH} 
-            fill="url(#zebra-stripe)" 
-        />
-         {/* Right Crosswalk */}
-         <rect 
-            x={CENTER + ROAD_HALF + 8} 
-            y={CENTER - ROAD_HALF} 
-            width={16} 
-            height={ROAD_WIDTH} 
-            fill="url(#zebra-stripe)" 
-        />
-        {/* Top Crosswalk (Rotated pattern) */}
-        <rect 
-            x={CENTER - ROAD_HALF} 
-            y={CENTER - ROAD_HALF - 24} 
-            width={ROAD_WIDTH} 
-            height={16} 
-            fill="url(#zebra-stripe)" 
-            transform={`rotate(90, ${CENTER}, ${CENTER - ROAD_HALF - 16}) translate(${ROAD_HALF - 8 + (CENTER - (CENTER - ROAD_HALF - 24))}, ${ROAD_HALF - 8 + (CENTER - (CENTER - ROAD_HALF - 24))})`} // Logic simplification below
-            // Actually, simplified manual rotate logic for pattern is hard in pure SVG inline. 
-            // Let's just use manual rects for horizontal stripes for top/bottom to save headache.
-            fillOpacity="0" // Hide this, use manual below
-        />
-      </g>
-
-      {/* --- CROSSWALK STRIPES --- */}
+      {/* CROSSWALKS (zebra stripes) */}
       <g fill="white">
         {Array.from({ length: STRIPE_COUNT }).map((_, i) => (
           <rect key={`top-${i}`}
@@ -160,58 +128,39 @@ const IntersectionRoad = () => {
         ))}
       </g>
 
-      {/* ====================================================== */}
-      {/* =============== TRAFFIC LIGHTS (CLEAN) =============== */}
-      {/* ====================================================== */}
+      {/* TRAFFIC LIGHTS (unchanged) */}
+      <TrafficLight
+        x={CENTER+ ROAD_HALF - 20}
+        y={CENTER - ROAD_HALF - 100 }
+        rotation={0}
+      />
 
-      
-        {/* === TOP incoming traffic → faces DOWN === */}
-<TrafficLight
-  x={CENTER+ ROAD_HALF - 20}
-  y={CENTER - ROAD_HALF - 100 }   // Move higher, clean alignment
-  rotation={0}
-/>
+      <TrafficLight
+        x={CENTER - ROAD_HALF+ 20}
+        y={CENTER + ROAD_HALF + 100}
+        rotation={0}
+      />
 
-{/* === BOTTOM incoming traffic → faces UP === */}
-<TrafficLight
-  x={CENTER - ROAD_HALF+ 20}
-  y={CENTER + ROAD_HALF + 100}   // Move lower
-  rotation={0}
-/>
+      <TrafficLight
+        x={CENTER - ROAD_HALF - 55}
+        y={CENTER- ROAD_HALF + 40}
+        rotation={0}
+      />
 
-{/* === LEFT incoming traffic → faces RIGHT === */}
-<TrafficLight
-  x={CENTER - ROAD_HALF - 55}   // Move further left
-  y={CENTER- ROAD_HALF + 40}
-  rotation={0}
-/>
+      <TrafficLight
+        x={CENTER + ROAD_HALF + 55}
+        y={CENTER + ROAD_HALF - 40}
+        rotation={0}
+      />
 
-{/* === RIGHT incoming traffic → faces LEFT === */}
-<TrafficLight
-  x={CENTER + ROAD_HALF + 55}   // Move further right
-  y={CENTER + ROAD_HALF - 40}
-  rotation={0}
-/>
-
-<Car
-  x={CENTER}
-  y={CENTER - 120}
-  angle={180}        // facing up
-  color="blue"
-/>
-
-<Car
-  x={CENTER - 100}
-  y={CENTER + 80}
-  angle={90}         // facing right
-  color="green"
-/>
-
-<Ambulance
-  x={CENTER }
-  y={CENTER }
-  angle={90}         // facing right
-/>
+      {/* ---------- DYNAMIC VEHICLES ---------- */}
+      {vehicles.map(v =>
+        v.isAmbulance ? (
+          <Ambulance key={v.id} x={v.x} y={v.y} rotation={v.rotation} />
+        ) : (
+          <Car key={v.id} x={v.x} y={v.y} rotation={v.rotation} />
+        )
+      )}
 
     </svg>
   );
