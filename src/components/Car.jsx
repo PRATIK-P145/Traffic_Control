@@ -1,25 +1,60 @@
 import React from "react";
 
-/*
-props:
-- progress: number - position along path (-0.3 .. 1.1)
-- isLeft: boolean - left lane vs right lane (visual offset)
-We will compute transform for 8 lane layout.
-For simplicity, Car renders as a small rectangle and its position depends on CSS translation.
-*/
+const Car = ({ x, y, rotation = 0, color = "#3A7AFE" }) => {
+  // Base sizes you can tweak anytime
+  const CAR_WIDTH = 43;
+  const CAR_HEIGHT = 30;
+  const ROOF_WIDTH = 24;
+  const ROOF_HEIGHT = 12;
 
-export default function Car({ progress = 0, isLeft = true }) {
-  // clamp progress for visualization:
-  const p = progress;
-  // determine style: vertical or horizontal depends on context; parent positioned zone decides orientation
-  // We'll set transform translate for basic motion inside the zone using progress.
-  const offset = isLeft ? -10 : 10;
-  const translate = `translateY(${(1 - p) * 120 - 40}px)`; // used in some zones; Car wrapper parent will adjust
-  // For flexible placement, the parent zone will use absolute and Car will use inline style set via top/left in embedding usage.
-  // Here we render a simple block and let parent CSS handle placement via transforms
   return (
-    <div className="car" style={{ transform: `translateY(${(1 - p) * 70}px)` }}>
-      {/* small colored box */}
-    </div>
+    <g
+      transform={`translate(${x}, ${y}) rotate(${rotation})`}
+      style={{ transition: "transform 0.3s linear" }}
+    >
+      {/* Car Body */}
+      <rect
+        x={-CAR_WIDTH / 2}
+        y={-CAR_HEIGHT / 2}
+        width={CAR_WIDTH}
+        height={CAR_HEIGHT}
+        rx="8"
+        ry="8"
+        fill={color}
+        stroke="#1f1f1f"
+        strokeWidth="1.5"
+      />
+
+      {/* Car Roof */}
+      <rect
+        x={-ROOF_WIDTH / 2}
+        y={-ROOF_HEIGHT / 2}
+        width={ROOF_WIDTH}
+        height={ROOF_HEIGHT}
+        rx="5"
+        ry="5"
+        fill="#ffffffaa"
+      />
+
+      {/* Headlights (front side = +X direction before rotation) */}
+      <rect
+        x={CAR_WIDTH / 2 - 4}
+        y={-CAR_HEIGHT / 2 + 4}
+        width="4"
+        height="6"
+        rx="2"
+        fill="#fff9c4"
+      />
+      <rect
+        x={CAR_WIDTH / 2 - 4}
+        y={CAR_HEIGHT / 2 - 10}
+        width="4"
+        height="6"
+        rx="2"
+        fill="#fff9c4"
+      />
+    </g>
   );
-}
+};
+
+export default Car;

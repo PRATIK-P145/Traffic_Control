@@ -2,6 +2,39 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+simulation-
+
+frontend/
+├── package.json
+├── public/
+│   └── index.html
+└── src/
+    ├── index.js
+    ├── App.js
+    ├── styles.css
+    ├── components/
+    │   ├── TrafficIntersection.jsx
+    │   ├── TrafficLight.jsx
+    │   ├── Car.jsx
+    │   ├── Ambulance.jsx
+    │   └── ControlPanel.jsx
+    └── logic/
+        ├── trafficLogic.js
+        ├── emergencyLogic.js
+        └── simulationState.js
+│
+├── backend/
+│   ├── main.py
+│   ├── controllers/
+│   │      └── traffic_controller.py
+│   ├── models/
+│   │      ├── traffic_state.py
+│   │      └── car_model.py
+│   └── logic/
+│         ├── signal_manager.py
+│         ├── car_counter.py
+│         └── utils.py
+
 ## Available Scripts
 
 In the project directory, you can run:

@@ -1,5 +1,6 @@
 import React from "react";
 import TrafficLight from "./TrafficLight";
+import Car from "./Car";
 
 // Configuration Constants
 const CANVAS_SIZE = 600;
@@ -190,6 +191,21 @@ const IntersectionRoad = () => {
   y={CENTER + ROAD_HALF - 40}
   rotation={0}
 />
+
+<Car
+  x={CENTER}
+  y={CENTER - 120}
+  angle={180}        // facing up
+  color="blue"
+/>
+
+<Car
+  x={CENTER - 100}
+  y={CENTER + 80}
+  angle={90}         // facing right
+  color="green"
+/>
+
 
     </svg>
   );
