@@ -12,18 +12,13 @@ Props:
 
 const DIR_LABEL = ["North (1)", "East (2)", "South (3)", "West (4)"];
 
-export default function ControlPanel({ lanes, addCar, addAmbulance, clearLane, timings, mode }) {
+export default function ControlPanel({  addCar, addAmbulance, clearLane, timings, mode }) {
   return (
     <div className="control-panel">
       <h2>Control Panel</h2>
       <p className="small">Add cars or toggle ambulance. Each direction controls both incoming lanes.</p>
 
-      {lanes.map((l, i) => (
-        <div key={i} style={{ marginBottom: 12, padding: 8, borderRadius: 8, background: "rgba(255,255,255,0.02)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <strong>{DIR_LABEL[i]}</strong>
-            <div className="small">Cars: {l.cars.length}</div>
-          </div>
+      
 
           <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
             <button onClick={() => addCar(i)}>Add Car</button>

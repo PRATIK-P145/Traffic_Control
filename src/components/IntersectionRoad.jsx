@@ -1,6 +1,7 @@
 import React from "react";
 import TrafficLight from "./TrafficLight";
 import Car from "./Car";
+import Ambulance from "./Ambulance";
 
 // Configuration Constants
 const CANVAS_SIZE = 600;
@@ -206,6 +207,11 @@ const IntersectionRoad = () => {
   color="green"
 />
 
+<Ambulance
+  x={CENTER }
+  y={CENTER }
+  angle={90}         // facing right
+/>
 
     </svg>
   );
