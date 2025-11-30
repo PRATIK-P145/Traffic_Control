@@ -1,5 +1,5 @@
 
-# **Smart Traffic Management System (Simulation) — GitHub Wiki**
+# **Smart Traffic Management System**
 
 
 # **Overview**
@@ -99,11 +99,7 @@ The simulation will be available at:
 http://localhost:3000
 ```
 ---
-Here is a **clean, professional “Project Directory Structure” section** written in GitHub Wiki style. It’s formatted for clarity and gives short explanations of what each file and folder does—perfect for documentation or hackathon submission.
 
-You can place this as a standalone Wiki page (recommended name: **Project-Structure**) or add it inside your main README/Wiki Home.
-
----
 
 # **Project Directory Structure**
 

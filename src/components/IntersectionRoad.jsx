@@ -162,11 +162,7 @@ const IntersectionRoad = ({ vehicles = [] }) => {
         )
       )}
 
-  <svg width={600} height={600}>
-  <IntersectionRoad />
-  <TrafficLightsManager />
- 
-  </svg>
+
 
 
     </svg>

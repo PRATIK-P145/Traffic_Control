@@ -1,9 +1,5 @@
-// TrafficContext.jsx
 import React, { createContext, useState, useEffect, useCallback } from "react";
-
-import { PHASES } from "../logic/trafficPhases";
 import { startTrafficCycle } from "../logic/trafficController";
-import { computeDynamicTiming } from "../logic/dynamicTiming";
 
 export const TrafficContext = createContext();
 
@@ -11,124 +7,133 @@ export default function TrafficProvider({ children }) {
   // ---------------------------------------------------
   // STATE
   // ---------------------------------------------------
-  const [phaseIndex, setPhaseIndex] = useState(0);          // 0 = NS, 1 = EW
-  const [activePhase, setActivePhase] = useState(PHASES.NS_GREEN);
+  const [phase, setPhase] = useState(0); // 0 = NS green, 1 = EW green
+  const [colors, setColors] = useState({});
+  const [emergencyMode, setEmergencyMode] = useState(false);
+  const [emergencyDir, setEmergencyDir] = useState(null);
 
-  // Car counts from your CarManager (parent component will update this)
+  // You MUST update this function when lanes change
+  // You will pass car counts from parent component later.
   const [laneCarCounts, setLaneCarCounts] = useState({
-    0: 0, // North
-    1: 0, // East
-    2: 0, // South
-    3: 0  // West
+    0: 0, // North incoming
+    1: 0, // East incoming
+    2: 0, // South incoming
+    3: 0, // West incoming
   });
 
-  // Emergency control
-  const [hasAmbulance, setHasAmbulance] = useState(false);
-  const [ambulanceDir, setAmbulanceDir] = useState(null);
-
   // ---------------------------------------------------
-  // COLOR MAPPING LOGIC — output used by TrafficLightsManager
+  // LIGHT COLOR LOGIC
   // ---------------------------------------------------
-  const colors = useCallback(() => {
-    // Emergency override → BLUE everywhere except the ambulance lane which gets GREEN
-    if (hasAmbulance && ambulanceDir !== null) {
+  const getColors = useCallback(() => {
+    // Emergency override
+    if (emergencyMode && emergencyDir !== null) {
       return {
-        north: ambulanceDir === 0 ? "green" : "blue",
-        east:  ambulanceDir === 1 ? "green" : "blue",
-        south: ambulanceDir === 2 ? "green" : "blue",
-        west:  ambulanceDir === 3 ? "green" : "blue"
+        north: emergencyDir === 0 ? "green" : "blue",
+        east:  emergencyDir === 1 ? "green" : "blue",
+        south: emergencyDir === 2 ? "green" : "blue",
+        west:  emergencyDir === 3 ? "green" : "blue"
       };
     }
 
-    // Normal NS/EW logic
-    if (activePhase === PHASES.NS_GREEN) {
+    // Normal mode — 2-phase logic
+    if (phase === 0) {
+      // NS green
       return {
         north: "green",
         south: "green",
-        east:  "red",
-        west:  "red"
+        east: "red",
+        west: "red"
       };
-    }
-
-    if (activePhase === PHASES.EW_GREEN) {
+    } else {
+      // EW green
       return {
         north: "red",
         south: "red",
-        east:  "green",
-        west:  "green"
+        east: "green",
+        west: "green"
       };
     }
+  }, [phase, emergencyMode, emergencyDir]);
 
-    // Fallback
-    return {
-      north: "red",
-      south: "red",
-      east:  "red",
-      west:  "red"
-    };
-  }, [activePhase, hasAmbulance, ambulanceDir]);
+  useEffect(() => {
+    setColors(getColors());
+  }, [getColors]);
 
   // ---------------------------------------------------
-  // DYNAMIC TIMING HANDLER
+  // DYNAMIC TIMING LOGIC
   // ---------------------------------------------------
   const getDynamicTiming = useCallback(
     (index) => {
-      const carCounts = {
-        ns: laneCarCounts[0] + laneCarCounts[2],
-        ew: laneCarCounts[1] + laneCarCounts[3]
-      };
-
-      const result = computeDynamicTiming({
-        phaseIndex: index,
-        carCounts,
-        hasAmbulance
-      });
-
-      // Update active phase
-      if (!result.emergencyHold) {
-        setActivePhase(result.phase);
-      } else {
-        setActivePhase(PHASES.BLUE_EMERGENCY);
+      // If ambulance → stay on same phase forever until cleared
+      if (emergencyMode) {
+        return {
+          phase,        // keep current phase (no switching)
+          duration: 500 // check again every 0.5s
+        };
       }
 
-      return result;
+      // Determine which phase we are entering:
+      // index = 0 -> NS green
+      // index = 1 -> EW green
+      const newPhase = index;
+
+      // Car counts:
+      const north = laneCarCounts[0];
+      const east  = laneCarCounts[1];
+      const south = laneCarCounts[2];
+      const west  = laneCarCounts[3];
+
+      // Phase 0 → NS green, EW red
+      if (newPhase === 0) {
+        const carCount = north + south;
+        const duration = 1000 + carCount * 500; // base 1s + 0.5s/car
+        return { phase: 0, duration };
+      }
+
+      // Phase 1 → EW green, NS red
+      if (newPhase === 1) {
+        const carCount = east + west;
+        const duration = 1000 + carCount * 500;
+        return { phase: 1, duration };
+      }
+
+      return { phase: 0, duration: 1000 };
     },
-    [laneCarCounts, hasAmbulance]
+    [laneCarCounts, emergencyMode, phase]
   );
 
   // ---------------------------------------------------
-  // TRAFFIC CYCLE STARTER
+  // START TRAFFIC CYCLE
   // ---------------------------------------------------
   useEffect(() => {
-    const stop = startTrafficCycle(setPhaseIndex, getDynamicTiming);
-    return stop; // cleanup timer
+    const stopFn = startTrafficCycle(setPhase, getDynamicTiming);
+    return stopFn;
   }, [getDynamicTiming]);
 
   // ---------------------------------------------------
-  // EMERGENCY CONTROL
+  // EMERGENCY HANDLERS
   // ---------------------------------------------------
   const activateEmergency = (dir) => {
-    setHasAmbulance(true);
-    setAmbulanceDir(dir);
+    setEmergencyDir(dir);
+    setEmergencyMode(true);
   };
 
   const clearEmergency = () => {
-    setHasAmbulance(false);
-    setAmbulanceDir(null);
+    setEmergencyDir(null);
+    setEmergencyMode(false);
   };
 
   // ---------------------------------------------------
-  // PUBLIC API — what components can use
+  // PUBLIC API
   // ---------------------------------------------------
   return (
     <TrafficContext.Provider
       value={{
-        phaseIndex,
-        activePhase,
-        lightColors: colors(),
+        phase,
+        colors,
         laneCarCounts,
         setLaneCarCounts,
-        hasAmbulance,
+        emergencyMode,
         activateEmergency,
         clearEmergency
       }}

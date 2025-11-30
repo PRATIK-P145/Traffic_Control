@@ -29,11 +29,23 @@ simulation-frontend/
 │         ├── car_counter.py
 │         └── utils.py
 │
-└── frontend/
-    ├── src/
-    │    ├── components/
-    │    ├── App.jsx
-    │    ├── api/
-    │    │     └── trafficAPI.js
-    │    └── ...
-    └── package.json
+
+
+
+src/
+ ├── context/
+ │    └── TrafficContext.jsx
+ │
+ ├── logic/
+ │    ├── trafficController.js
+ │    ├── trafficPhases.js
+ │    ├── dynamicTiming.js
+ │
+ ├── components/
+ │    ├── TrafficLight.jsx
+ │    └── TrafficLightsManager.jsx
+ │
+ ├── vehicles/
+ │    └── CarsManager.jsx  (already partly done, will feed car counts)
+ │
+ └── App.jsx
