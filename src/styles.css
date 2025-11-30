@@ -112,8 +112,8 @@
   }
   .bulb.red.on { background: radial-gradient(circle at 30% 30%, #ff9a9a, #b10f1a); box-shadow:0 0 8px #b10f1a; }
   .bulb.yellow.on { background: radial-gradient(circle at 30% 30%, #fff3b0, #c88e00); box-shadow:0 0 8px #c88e00; }
-  .bulb.green.on { background: radial-gradient(circle at 30% 30%, #c9f7d0, #0b7a29); box-shadow:0 0 8px #0b7a29; }
-  .bulb.blue.on { background: radial-gradient(circle at 30% 30%, #bfe9ff, #0b57a3); box-shadow:0 0 10px #0b57a3; }
+  .bulb.green.on { background: radial-gradient(circle at 30% 30%, #c9f7d0, #02f543); box-shadow:0 0 8px #0b7a29; }
+  .bulb.blue.on { background: radial-gradient(circle at 30% 30%, #bfe9ff, #087bef); box-shadow:0 0 10px #0b57a3; }
   
   /* place the four directional light groups */
   .lights-n { left: 395px; top: 90px; transform: translateY(-100%); }

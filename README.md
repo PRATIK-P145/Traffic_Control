@@ -19,13 +19,14 @@ This README guides you through:
 
 1. [Project Introduction](#project-introduction)
 2. [Local Setup (Simulation Version)](#local-setup-simulation-version)
-3. [System Architecture](#system-architecture)
-4. [Traffic Logic & Blue Light Protocol](#🚦traffic-logic--blue-light-protocol)
-5. [Machine Learning Model](#machine-learning-model)
-6. [Edge Impulse Integration](#edge-impulse-integration)
-7. [Advantages & Limitations](#advantages--limitations)
-8. [Current Submission Status](#current-submission-status)
-9. [Future Enhancements](#future-enhancements)
+3. [Simulation Screenshots](#simulation-screenshots)
+4. [System Architecture](#system-architecture)
+5. [Traffic Logic & Blue Light Protocol](#🚦traffic-logic--blue-light-protocol)
+6. [Machine Learning Model](#machine-learning-model)
+7. [Edge Impulse Integration](#edge-impulse-integration)
+8. [Advantages & Limitations](#advantages--limitations)
+9. [Current Submission Status](#current-submission-status)
+10. [Future Enhancements](#future-enhancements)
 
 ---
 
@@ -132,7 +133,24 @@ src/
 ├── logo.svg
 └── index.js
 ```
+------------------------------------
+# Simulation Screenshots
 
+ **1️⃣ Normal Mode – Standard Traffic Flow** 
+
+![Normal Mode](screenshots/normal-mode.png)
+
+  This screenshot shows the intersection operating under regular conditions.
+Traffic signals follow the dynamic cycle, giving green time to lanes based on vehicle count while skipping empty lanes. All four approaches coordinate smoothly to maintain efficient flow without any emergency overrides.
+
+---
+**2️⃣ Emergency Mode – Ambulance Priority Control** 
+![Emergency Mode](screenshots/emergency-mode.png)
+
+This screenshot demonstrates the system’s emergency response mode.
+The moment an ambulance is detected, the algorithm overrides the normal cycle, turning its lane green immediately while switching all other directions to red. This ensures the ambulance passes through the intersection safely and without delay.
+
+------------------------------------
 ---
 
 # **System Architecture**

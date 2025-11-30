@@ -1,47 +1,37 @@
 import React from "react";
 
-const LIGHT_SIZE = 14;
-const LIGHT_GAP = 6;
-const BOX_PADDING = 6;
-const BOX_WIDTH = 40;
+const LIGHT_SIZE = 12;       // diameter of each circle
+const LIGHT_GAP = 6;         // spacing between lights
+const BOX_PADDING = 6;       // padding inside the rectangle
+const BOX_WIDTH = 40;        // traffic light body width
 
 export default function TrafficLight({ x, y, state = "red", rotation = 0 }) {
-
-  /**
-   * Actual states produced by TrafficContext:
-   *  - "red"
-   *  - "yellow"
-   *  - "green"
-   *  - "blue"   (emergency override)
-   */
-
-  const COLORS = {
-    red:    ["red", "gray", "gray"],        // only red ON
-    yellow: ["gray", "yellow", "gray"],     // only yellow ON
-    green:  ["gray", "gray", "green"],      // only green ON
-    blue:   ["gray", "gray", "#00aaff"],    // emergency
+  const colors = {
+    red: ["red", "gray", "gray", "gray"],
+    yellow: ["gray", "yellow", "gray", "gray"],
+    green: ["gray", "gray", "green", "gray"],
+    blue: ["gray", "gray", "gray", "blue"]
   };
 
-  const active = COLORS[state] || COLORS.red;
+  const active = colors[state] || colors.red;
 
   const BOX_HEIGHT =
-    3 * LIGHT_SIZE + 2 * LIGHT_GAP + 2 * BOX_PADDING;
+    4 * LIGHT_SIZE + 3 * LIGHT_GAP + 2 * BOX_PADDING;
 
   return (
     <g transform={`translate(${x}, ${y}) rotate(${rotation})`}>
-      {/* Traffic Light Housing */}
+      {/* Traffic Light Box */}
       <rect
         x={-BOX_WIDTH / 2}
         y={-BOX_HEIGHT / 2}
         width={BOX_WIDTH}
         height={BOX_HEIGHT}
         rx="6"
-        fill="#111"
+        fill="#000"
         stroke="#fff"
-        strokeWidth={1}
       />
 
-      {/* Bulbs */}
+      {/* Vertical Light Stack */}
       {active.map((color, index) => (
         <circle
           key={index}
@@ -54,7 +44,6 @@ export default function TrafficLight({ x, y, state = "red", rotation = 0 }) {
           }
           r={LIGHT_SIZE / 2}
           fill={color}
-          style={{ transition: "fill 0.2s ease" }}
         />
       ))}
     </g>
