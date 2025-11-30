@@ -1,103 +1,293 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# **Smart Traffic Management System (Simulation) — GitHub Wiki**
 
-simulation-
 
-frontend/
-├── package.json
-├── public/
-│   └── index.html
-└── src/
-    ├── index.js
-    ├── App.js
-    ├── styles.css
-    ├── components/
-    │   ├── TrafficIntersection.jsx
-    │   ├── TrafficLight.jsx
-    │   ├── Car.jsx
-    │   ├── Ambulance.jsx
-    │   └── ControlPanel.jsx
-    └── logic/
-        ├── trafficLogic.js
-        ├── emergencyLogic.js
-        └── simulationState.js
+# **Overview**
+
+Welcome to the documentation for the **Smart Traffic Management System**, a simulation-based project built using **React + Node.js** and integrated with **Edge Impulse** for machine-learning based traffic detection.
+
+This README guides you through:
+
+* Setting up and running the simulation
+* Understanding the traffic logic and emergency protocol
+* Learning how ML integrates via Edge Impulse
+* System design, architecture, and future extensions
+
+---
+
+# **Table of Contents**
+
+1. [Project Introduction](#project-introduction)
+2. [Local Setup (Simulation Version)](#local-setup-simulation-version)
+3. [System Architecture](#system-architecture)
+4. [Traffic Logic & Blue Light Protocol](#🚦traffic-logic--blue-light-protocol)
+5. [Machine Learning Model](#machine-learning-model)
+6. [Edge Impulse Integration](#edge-impulse-integration)
+7. [Advantages & Limitations](#advantages--limitations)
+8. [Current Submission Status](#current-submission-status)
+9. [Future Enhancements](#future-enhancements)
+
+---
+
+# **Project Introduction**
+
+The **Smart Traffic Management System** is designed to tackle real-world congestion using **camera-based vehicle detection** and **adaptive signal timing** powered by edge-based machine learning.
+
+### Key Goals
+
+* Reduce unnecessary wait time
+* Optimize green-light duration based on actual vehicle count
+* Automatically prioritize emergency vehicles
+* Demonstrate real-time ML deployment on edge hardware
+
+### Unique Feature: The Blue Emergency Light
+
+A completely new addition to the standard RYG (Red–Yellow–Green) system:
+
+* Blue indicates **emergency override mode**
+* Lane containing an emergency vehicle gets immediate clearance
+* All other lanes are halted automatically
+
+This creates a safer, faster, and automated response mechanism for emergency services.
+
+---
+
+# **Local Setup (Simulation Version)**
+
+This section explains how to run the **React-based simulation** on your machine.
+
+## **1. Install Node.js & npm**
+
+Download from:
+[https://nodejs.org/](https://nodejs.org/)
+
+Verify installation:
+
+```
+node -v
+npm -v
+```
+
+---
+
+## **2. Clone the Repository**
+
+```
+git clone https://github.com/your-repo/smart-traffic-sim.git
+cd smart-traffic-sim
+```
+
+---
+
+## **3. Install Dependencies**
+
+```
+npm install
+```
+
+---
+
+## **4. Start the Development Server**
+
+```
+npm start
+```
+
+The simulation will be available at:
+
+```
+http://localhost:3000
+```
+---
+Here is a **clean, professional “Project Directory Structure” section** written in GitHub Wiki style. It’s formatted for clarity and gives short explanations of what each file and folder does—perfect for documentation or hackathon submission.
+
+You can place this as a standalone Wiki page (recommended name: **Project-Structure**) or add it inside your main README/Wiki Home.
+
+---
+
+# **Project Directory Structure**
+
+```
+src/
 │
-├── backend/
-│   ├── main.py
-│   ├── controllers/
-│   │      └── traffic_controller.py
-│   ├── models/
-│   │      ├── traffic_state.py
-│   │      └── car_model.py
-│   └── logic/
-│         ├── signal_manager.py
-│         ├── car_counter.py
-│         └── utils.py
+├── components/
+│   ├── CarRenderer.jsx
+│   ├── IntersectionRoad.jsx
+│   ├── Car.jsx
+│   ├── ControlPanel.jsx
+│   ├── TrafficLight.jsx
+│   ├── TrafficLightsManager.jsx
+│   ├── Ambulance.jsx
+│   └── TrafficIntersection.jsx
+│
+├── context/
+│   └── TrafficContext.jsx
+│
+├── logic/
+│   ├── trafficController.js
+│   ├── dynamicTiming.js
+│   ├── trafficPhase.js
+│   ├── trafficTiming.js
+│   └── emergencyLogic.js
+│
+├── files.txt
+├── App.js
+├── styles.css
+├── logo.svg
+└── index.js
+```
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+# **System Architecture**
 
-### `npm start`
+The simulation models a **four-way intersection** featuring:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### **Core Components**
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+* **React frontend** for rendering the intersection
+* **Car spawning system** with grid-like lane arrangement
+* **Traffic signal controller** with adaptive cycle timing
+* **Emergency vehicle logic**
+* **Event-driven movement system** using frame updates
 
-### `npm test`
+### **Lane Structure**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Each road has:
 
-### `npm run build`
+* **Incoming lane** (vehicles arriving at center)
+* **Outgoing lane** (kept empty for simplicity)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### **Simulation Rendering Includes**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+* Cars
+* Ambulance models
+* Traffic light units
+* Stop lines and lane boundaries
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+# **🚦 Traffic Logic & Blue Light Protocol**
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### **Adaptive Timing (Primary Logic)**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+The system continuously:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+* Detects number of cars per lane
+* Dynamically assigns green duration
+* Skips lanes with zero vehicles
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### **Emergency Override (Blue Light System)**
 
-## Learn More
+If ML detects an ambulance/police/fire truck:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+* All lights switch to **Blue Mode**
+* Emergency lane receives uninterrupted flow
+* Normal cycle resumes after clearance
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This ensures **zero delay for emergency movement**.
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+# **Machine Learning Model**
 
-### Analyzing the Bundle Size
+The vision model is trained to detect:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+* Cars
+* Emergency vehicles
 
-### Making a Progressive Web App
+### **Training Details**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+* Lightweight YOLO variant
+* Custom dataset of toy cars & ambulance models
+* Includes bounding boxes for classification
 
-### Advanced Configuration
+### **Outputs Used by System**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+* Lane-wise vehicle count
+* Emergency vehicle presence flag
+* Confidence levels
 
-### Deployment
+These values feed directly into the **adaptive traffic controller**.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+# **Edge Impulse Integration**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project demonstrates end-to-end compatibility with **Edge Impulse**, ensuring easy deployment on embedded devices.
+
+### **Why Edge Impulse?**
+
+* Easy dataset management
+* Built-in annotation tools
+* Vision ML pipeline
+* Automatic model optimization
+* Real-time performance benchmarking
+* Direct deployment to Raspberry Pi
+
+### **Platforms Used**
+
+* **Edge Impulse Studio** for model building
+* **Remote Management API** to link Raspberry Pi
+* **Edge Runtime** for real-time inference
+
+### **Deployment Pipeline**
+
+1. Upload and label dataset in Edge Impulse
+2. Train model using EI vision pipeline
+3. Optimize model for embedded deployment
+4. Connect Raspberry Pi via Remote Management API
+5. Run inference on live camera feed
+6. Feed results to the simulation’s logic engine
+
+This demonstrates **edge-based AI traffic management** without reliance on cloud services.
+
+---
+
+# **Advantages & Limitations**
+
+## **Advantages**
+
+* Fast, real-time adaptive timing
+* No wasted green-light time
+* Automated emergency priority
+* Works with existing camera infrastructure
+* Fully edge-based — low latency
+* Scalable and cost-effective
+
+## **Limitations**
+
+* Needs broader dataset for varied lighting/weather
+* Real-world deployment requires regulatory approval
+* Single-intersection model (multi-node planned)
+* Simulation supports straight motion only (currently)
+
+---
+
+# **Current Submission Status**
+
+This Hackathon submission includes:
+
+* A fully interactive **React simulation**
+* ML model trained externally + tested on Raspberry Pi
+* Edge Impulse integration demonstrated through:
+
+  * Remote Management API
+  * Logs and inference summaries
+* Working implementation of **Blue Light emergency protocol**
+
+---
+
+# **Future Enhancements**
+
+We plan to expand the system with:
+
+* Turning lanes & behavior
+* Multi-intersection coordination
+* Larger, diverse datasets
+* Full physical prototype with sensors
+* Predictive ML for congestion anticipation
+* Dashboard for analytics
+
+---
+
